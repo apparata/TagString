@@ -118,7 +118,6 @@ public struct TagString {
     ///
     public func attributed(with attributes: [Tag: Attributes]) -> NSAttributedString? {
         if let tokenizedText = tokenize(string: self.string) {
-            dump(tokenizedText)
             return buildString(tokenizedText: tokenizedText, attributes: attributes)
         } else {
             return nil
