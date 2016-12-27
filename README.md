@@ -6,7 +6,7 @@ The `TagString` struct is a wrapper around strings that contain simple markup fo
 
 Tags can be nested. Attributes take precedence inside and out.
 
-Tags are writen with angular brackets `<tag>`. Closing tag names begin with a forward slash `</tag>`. Use `&lt;` and `&gt;` to escape angular brackets, as in HTML. `&amp;` escapes &.
+Tags are written with angular brackets `<tag>`. Closing tag names begin with a forward slash `</tag>`. Use `&lt;` and `&gt;` to escape angular brackets, as in HTML. `&amp;` escapes &.
 
 ## Example
 
