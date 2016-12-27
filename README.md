@@ -10,6 +10,8 @@ Tags are writen with angular brackets `<tag>`. Closing tag names begin with a fo
 
 ## Example
 
+Using TagString struct:
+
 ```Swift
 let attributes: [String: [String: AnyObject]] = [
     "loud": [NSFontAttributeName: UIFont.systemFont(ofSize: 40)],
@@ -18,4 +20,15 @@ let attributes: [String: [String: AnyObject]] = [
 
 let string: TagString = "Testing <loud>this <green>text</green></loud> thing."
 string.attributed(with: attributes)
+```
+
+Using String extension:
+
+```Swift
+let attributes: [String: [String: AnyObject]] = [
+    "loud": [NSFontAttributeName: UIFont.systemFont(ofSize: 40)],
+    "green": [NSForegroundColorAttributeName: UIColor.green]
+]
+
+let string = "Testing <loud>this <green>text</green></loud> thing.".attributed(with: attributes)
 ```
