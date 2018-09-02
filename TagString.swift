@@ -25,7 +25,7 @@
 import Foundation
 
 public extension String {
-
+    
     /// Returns an NSAttributedString, attributed based on markup in string
     /// and a dictionary where the tag is the key mapped to a dictionary
     /// of attributes.
@@ -38,9 +38,9 @@ public extension String {
     ///
     /// Example:
     /// ```
-    /// let attributes: [String: [String: AnyObject]] = [
-    ///     "loud": [NSFontAttributeName: UIFont.systemFont(ofSize: 40)],
-    ///     "green": [NSForegroundColorAttributeName: UIColor.green]
+    /// let attributes: [String: [NSAttributedStringKey: AnyObject]] = [
+    ///     "loud": [.font: UIFont.systemFont(ofSize: 40)],
+    ///     "green": [.color: UIColor.green]
     /// ]
     ///
     /// let string = "Testing <loud>this <green>text</green></loud> thing.".attributed(with: attributes)
@@ -51,7 +51,7 @@ public extension String {
     /// - Returns: Returns attributed string or `nil` if tags were not used
     ///            correctly (e.g. no closing tag).
     ///
-    public func attributed(with attributes: [TagString.Tag: TagString.Attributes]) -> NSAttributedString? {
+    public func attributed(with attributes: TagString.Attributes) -> NSAttributedString? {
         return TagString(self).attributed(with: attributes)
     }
 }
@@ -67,9 +67,9 @@ public extension String {
 ///
 /// Example:
 /// ```
-/// let attributes: [String: [String: AnyObject]] = [
-///     "loud": [NSFontAttributeName: UIFont.systemFont(ofSize: 40)],
-///     "green": [NSForegroundColorAttributeName: UIColor.green]
+/// let attributes: [String: [NSAttributedStringKey: AnyObject]] = [
+///     "loud": [.font: UIFont.systemFont(ofSize: 40)],
+///     "green": [.color: UIColor.green]
 /// ]
 ///
 /// let string: TagString = "Testing <loud>this <green>text</green></loud> thing."
@@ -78,17 +78,13 @@ public extension String {
 ///
 public struct TagString {
     
-    /// A `Tag` is represented as a String.
-    public typealias Tag = String
-    
-    /// `TagString.Attributes` correspond to `NSAttributedString` attributes.
-    public typealias Attributes = [String: AnyObject]
+    public typealias Attributes = [String: [NSAttributedStringKey: AnyObject]]
     
     private enum TagStringToken {
         case text(String)
         case entity(String)
-        case startTag(Tag)
-        case endTag(Tag)
+        case startTag(String)
+        case endTag(String)
     }
     
     private let entities = ["lt": "<", "gt": ">", "amp": "&"]
@@ -102,9 +98,9 @@ public struct TagString {
     
     /// Example:
     /// ```
-    /// let attributes: [String: [String: AnyObject]] = [
-    ///     "loud": [NSFontAttributeName: UIFont.systemFont(ofSize: 40)],
-    ///     "green": [NSForegroundColorAttributeName: UIColor.green]
+    /// let attributes: [String: [NSAttributedStringKey: AnyObject]] = [
+    ///     "loud": [.font: UIFont.systemFont(ofSize: 40)],
+    ///     "green": [.foregroundColor: UIColor.green]
     /// ]
     ///
     /// let string: TagString = "Testing <loud>this <green>text</green></loud> thing."
@@ -116,7 +112,7 @@ public struct TagString {
     /// - Returns: Returns attributed string or `nil` if tags were not used
     ///            correctly (e.g. no closing tag).
     ///
-    public func attributed(with attributes: [Tag: Attributes]) -> NSAttributedString? {
+    public func attributed(with attributes: Attributes) -> NSAttributedString? {
         if let tokenizedText = tokenize(string: self.string) {
             return buildString(tokenizedText: tokenizedText, attributes: attributes)
         } else {
@@ -214,9 +210,9 @@ public struct TagString {
     
     // MARK: - String builder
     
-    private func buildString(tokenizedText: [TagStringToken], attributes: [Tag: [String: AnyObject]]) -> NSAttributedString? {
+    private func buildString(tokenizedText: [TagStringToken], attributes: [String: [NSAttributedStringKey: AnyObject]]) -> NSAttributedString? {
         
-        var tagStack = [Tag]()
+        var tagStack = [String]()
         
         let outputString = NSMutableAttributedString()
         
@@ -250,8 +246,8 @@ public struct TagString {
         return NSAttributedString(attributedString: outputString)
     }
     
-    private func buildAttributes(tagStack: [Tag], attributes: [Tag: [String: AnyObject]]) -> [String: AnyObject] {
-        var compoundAttributes = [String: AnyObject]()
+    private func buildAttributes(tagStack: [String], attributes: [String: [NSAttributedStringKey: AnyObject]]) -> [NSAttributedStringKey: AnyObject] {
+        var compoundAttributes = [NSAttributedStringKey: AnyObject]()
         for tag in tagStack {
             if let tagAttributes = attributes[tag] {
                 for (key, value) in tagAttributes {
